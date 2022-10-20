@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import s from '../Modal/Modal.module.css'
 
 export class Modal extends Component {
@@ -39,4 +40,9 @@ export class Modal extends Component {
       </div>
     );
   }
+}
+
+Modal.propTypes = {
+   currentImage: PropTypes.object,
+   closeModal: PropTypes.func.isRequired,
 }

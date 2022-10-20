@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { ReactComponent as SearchIcon } from '../icons/icon.svg';
 import s from '../Searchbar/Searchbar.module.css';
@@ -35,9 +36,9 @@ export class Searchbar extends Component {
       <header className={s.searchbar}>
         <form className={s['search-form']} onSubmit={onSubmitForm}>
           <button type="submit" className={s['form-button']}>
-            <SearchIcon width="30" height="30"/>
+            <SearchIcon width="30" height="30" />
           </button>
-          
+
           <input
             className={s['form-input']}
             type="text"
@@ -52,3 +53,9 @@ export class Searchbar extends Component {
     );
   }
 }
+
+Searchbar.propTypes = {
+  addName: PropTypes.func,
+  onChangeName: PropTypes.func,
+  onSubmitForm: PropTypes.func,
+};

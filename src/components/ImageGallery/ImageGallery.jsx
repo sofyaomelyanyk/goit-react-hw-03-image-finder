@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import s from '../ImageGallery/ImageGallery.module.css'
 
 export const ImageGallery = ({children}) => {
@@ -7,3 +8,8 @@ export const ImageGallery = ({children}) => {
 </ul>
    )
 }
+
+ImageGallery.propTypes = {
+   children: PropTypes.node,
+}
+
