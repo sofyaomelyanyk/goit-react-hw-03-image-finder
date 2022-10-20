@@ -21,6 +21,7 @@ export class App extends Component {
     error: null,
     currentImage: null,
     isShow: false,
+    totalHits: null,
   };
 
   componentDidUpdate(_, prevState) {
@@ -37,13 +38,16 @@ export class App extends Component {
       this.setState({ isLoading: true, isShow: false, error: null });
       const res = await picturesRequest(picture, page, perPage);
 
+      console.log(res);
+
       if (!res.data.hits.length) {
-        throw new Error(message)
+        throw new Error(message);
       }
 
       this.setState(prevState => ({
         gallery: [...prevState.gallery, ...res.data.hits],
         isShow: true,
+        totalHits: res.data.totalHits,
       }));
     } catch {
       this.setState({ error: message, isShow: false });
@@ -66,6 +70,13 @@ export class App extends Component {
 
   closeModal = () => {
     this.setState({ currentImage: null });
+  };
+
+  totalPages = () => {
+    const total = Math.floor(this.state.totalHits / this.state.page);
+    if (this.state.page < total) {
+      this.setState({ isShow: false });
+    }
   };
 
   render() {
