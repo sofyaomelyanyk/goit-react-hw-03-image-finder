@@ -1,4 +1,7 @@
 import { Component } from 'react';
+import { toast } from 'react-toastify';
+import { ReactComponent as SearchIcon } from '../icons/icon.svg';
+import s from '../Searchbar/Searchbar.module.css';
 
 export class Searchbar extends Component {
   state = {
@@ -12,8 +15,11 @@ export class Searchbar extends Component {
   onSubmitForm = e => {
     e.preventDefault();
 
-    this.props.addName(this.state.picture);
+    if (this.state.picture.trim() === '') {
+      return toast.warn('Please, enter image name!');
+    }
 
+    this.props.addName(this.state.picture);
     this.reset();
   };
 
@@ -26,14 +32,14 @@ export class Searchbar extends Component {
     const { onChangeName, onSubmitForm } = this;
 
     return (
-      <header className="searchbar">
-        <form className="form" onSubmit={onSubmitForm}>
-          <button type="submit" className="button">
-            <span className="button-label">Search</span>
+      <header className={s.searchbar}>
+        <form className={s['search-form']} onSubmit={onSubmitForm}>
+          <button type="submit" className={s['form-button']}>
+            <SearchIcon width="30" height="30"/>
           </button>
-
+          
           <input
-            className="input"
+            className={s['form-input']}
             type="text"
             value={picture}
             onChange={onChangeName}

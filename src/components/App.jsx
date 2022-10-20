@@ -1,6 +1,10 @@
 import { Component } from 'react';
+import { ToastContainer } from 'react-toastify';
+import s from '../components/App.module.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Searchbar } from './Searchbar/Searchbar';
+import { Loader } from './Loader/Loader';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
 import { Modal } from './Modal/Modal';
@@ -15,43 +19,72 @@ export class App extends Component {
     perPage: 12,
     isLoading: false,
     error: null,
+    currentImage: null,
+    isShow: false,
   };
 
-  fetchPictures = (picture, page, perPage) => {
-    picturesRequest(picture, page, perPage).then(res =>
-      this.setState(prevState => ({
-        gallery: [...prevState.gallery, ...res.data.hits],
-      }))
-    );
-  }
-
   componentDidUpdate(_, prevState) {
-   const {picture, page, perPage} = this.state
+    const { picture, page, perPage } = this.state;
     if (prevState.picture !== picture || prevState.page !== page) {
       this.fetchPictures(picture, page, perPage);
     }
   }
 
+  fetchPictures = async (picture, page, perPage) => {
+    const message = 'Nothing found for your request!';
+
+    try {
+      this.setState({ isLoading: true, isShow: false, error: null });
+      const res = await picturesRequest(picture, page, perPage);
+
+      if (!res.data.hits.length) {
+        throw new Error(message)
+      }
+
+      this.setState(prevState => ({
+        gallery: [...prevState.gallery, ...res.data.hits],
+        isShow: true,
+      }));
+    } catch {
+      this.setState({ error: message, isShow: false });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
+
   addName = picture => {
-    this.setState({ picture,  gallery: [], page: 1});
+    this.setState({ picture, gallery: [], page: 1 });
   };
 
   loadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
+  openModal = data => {
+    this.setState({ currentImage: data });
+  };
+
+  closeModal = () => {
+    this.setState({ currentImage: null });
+  };
+
   render() {
-    const { addName } = this;
+    const { addName, loadMore, openModal, closeModal } = this;
+    const { isLoading, gallery, currentImage, error, isShow } = this.state;
     return (
-      <>
+      <div className={s.app}>
         <Searchbar addName={addName} />
+        {isLoading && <Loader />}
+        {error && <h2>{error}</h2>}
+        <ToastContainer autoClose={3000} theme="dark" />
         <ImageGallery>
-          {!this.state.picture && <h1>ВВЕДИТЕ ЧТО-НИБУДЬ</h1>}
-          <ImageGalleryItem gallery={this.state.gallery} />
+          <ImageGalleryItem openModal={openModal} gallery={gallery} />
         </ImageGallery>
-        <Button text="Load more" onClick={this.loadMore} />
-        <Modal />
-      </>
+        {isShow && <Button text="Load more" onClick={loadMore} />}
+        {currentImage && (
+          <Modal currentImage={currentImage} closeModal={closeModal} />
+        )}
+      </div>
     );
   }
 }
