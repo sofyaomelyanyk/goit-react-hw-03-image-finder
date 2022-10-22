@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
 import { Loader } from './Loader/Loader';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
+
 import { Modal } from './Modal/Modal';
 import { picturesRequest } from './services/api';
 import { Button } from './Button/Button';
@@ -88,9 +88,7 @@ export class App extends Component {
         {isLoading && <Loader />}
         {error && <h2>{error}</h2>}
         <ToastContainer autoClose={3000} theme="dark" />
-        <ImageGallery>
-          <ImageGalleryItem openModal={openModal} gallery={gallery} />
-        </ImageGallery>
+        <ImageGallery gallery={gallery} openModal={openModal} />
         {isShow && <Button text="Load more" onClick={loadMore} />}
         {currentImage && (
           <Modal currentImage={currentImage} closeModal={closeModal} />
